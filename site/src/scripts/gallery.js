@@ -9,7 +9,6 @@ const search = document.querySelector('#search');
 const count = document.querySelector('#result-count');
 const empty = document.querySelector('#empty-state');
 const title = document.querySelector('#collection-title');
-const categoryIndex = document.querySelector('#category-index');
 const dialog = document.querySelector('#detail-dialog');
 const themeToggle = document.querySelector('#theme-toggle');
 let currentCategory = data.categories[0];
@@ -17,10 +16,47 @@ let currentGroup = currentCategory.groups[0];
 let currentEntry = null;
 const loadedFonts = new Set();
 
+const translations = {
+  '素材图鉴': 'Asset gallery', '素材归档': 'Asset archive', '分类': 'Categories',
+  '角色': 'Characters', '配件': 'Accessories', '表情': 'Emotes', '界面': 'Interface', '图标': 'Icons', '字体': 'Fonts',
+  '图鉴图': 'Atlas', '完整图': 'Full image', '头部分层': 'Head layers', '身体分层': 'Body layers', '内置默认': 'Built-in defaults', '素材图': 'Source image',
+  '原版': 'Original', '登录SDK': 'Login SDK', 'Windows原生': 'Windows native', '发行包': 'Distribution',
+  '头部 1': 'Head 1', '头部 2': 'Head 2', '身体 1': 'Body 1', '身体 2': 'Body 2', '身体 3': 'Body 3',
+  '项': 'items', '查看': 'View', '查看源码': 'View source', '关闭': 'Close', '仓库路径': 'Repository path', '历史名称': 'Historical name',
+  '复制路径': 'Copy path', '已复制': 'Copied', '复制失败，请手动选择路径': 'Copy failed; select the path manually',
+  '打开原文件': 'Open original ↗', '同一条目的其他素材': 'Related files', '没有找到相关素材。': 'No matching assets.',
+  '搜索名称或文件名': 'Search names or filenames', '非官方素材归档 · 权利与来源': 'Unofficial archive · Rights & sources ↗',
+  '切换到浅色模式': 'Switch to light mode', '切换到深色模式': 'Switch to dark mode',
+};
+let locale = 'zh';
+try { locale = localStorage.getItem('wuwa-gallery-language') === 'en' ? 'en' : 'zh'; } catch {}
+function t(key) { return locale === 'en' ? (translations[key] || key) : key; }
+function applyLanguage() {
+  document.documentElement.lang = locale === 'en' ? 'en' : 'zh-CN';
+  document.title = `${t('素材图鉴')} · Wuwa Tappo`;
+  document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll('[data-i18n-label]').forEach(el => { el.setAttribute('aria-label', t(el.dataset.i18nLabel)); el.title = t(el.dataset.i18nLabel); });
+  for (const category of data.categories) document.querySelector(`[data-category="${category.id}"] .category-label`).textContent = t(category.label);
+  search.placeholder = t('搜索名称或文件名');
+  search.setAttribute('aria-label', search.placeholder);
+  title.textContent = t(currentCategory.label);
+  const toggle = document.querySelector('#language-toggle');
+  toggle.textContent = locale === 'en' ? 'English' : '中文';
+  toggle.setAttribute('aria-label', locale === 'en' ? 'Switch to Chinese' : '切换到英语');
+  applyTheme(document.documentElement.dataset.theme || 'light', false);
+  renderGroups();
+  render();
+}
+document.querySelector('#language-toggle').addEventListener('click', () => {
+  locale = locale === 'zh' ? 'en' : 'zh';
+  try { localStorage.setItem('wuwa-gallery-language', locale); } catch {}
+  applyLanguage();
+});
+
 function applyTheme(theme, save = true) {
   document.documentElement.dataset.theme = theme;
-  themeToggle.setAttribute('aria-label', theme === 'dark' ? '切换到浅色模式' : '切换到深色模式');
-  themeToggle.title = theme === 'dark' ? '切换到浅色模式' : '切换到深色模式';
+  themeToggle.setAttribute('aria-label', t(theme === 'dark' ? '切换到浅色模式' : '切换到深色模式'));
+  themeToggle.title = t(theme === 'dark' ? '切换到浅色模式' : '切换到深色模式');
   if (save) {
     try { localStorage.setItem('wuwa-gallery-theme', theme); } catch { /* Theme still works for this visit. */ }
   }
@@ -45,7 +81,7 @@ function card(entry) {
   button.type = 'button';
   button.className = 'asset-card';
   button.dataset.entryId = entry.id;
-  button.setAttribute('aria-label', `查看 ${entry.name}`);
+  button.setAttribute('aria-label', `${t('查看')} ${entry.name}`);
   const imageArea = document.createElement('span');
   imageArea.className = 'asset-image';
   if (/\.woff2?$/i.test(entry.path)) {
@@ -97,7 +133,7 @@ function renderGroups() {
     button.className = `group${group === currentGroup ? ' active' : ''}`;
     button.dataset.group = group;
     button.setAttribute('aria-pressed', String(group === currentGroup));
-    button.textContent = group;
+    button.textContent = t(group);
     fragment.append(button);
   }
   groups.replaceChildren(fragment);
@@ -110,8 +146,7 @@ categories.addEventListener('click', (event) => {
   if (index < 0) return;
   currentCategory = data.categories[index];
   currentGroup = currentCategory.groups[0];
-  title.textContent = currentCategory.label;
-  categoryIndex.textContent = `/ ${String(index + 1).padStart(2, '0')}`;
+  title.textContent = t(currentCategory.label);
   for (const candidate of categories.querySelectorAll('[data-category]')) {
     const selected = candidate === button;
     candidate.classList.toggle('active', selected);
@@ -139,12 +174,12 @@ document.addEventListener('keydown', (event) => {
 function showDetails(entry) {
   currentEntry = entry;
   document.querySelector('#detail-title').textContent = entry.name;
-  document.querySelector('#detail-category').textContent = `${currentCategory.label} / ${entry.group}`;
+  document.querySelector('#detail-category').textContent = `${t(currentCategory.label)} / ${t(entry.group)}`;
   document.querySelector('#detail-path').textContent = entry.path;
   document.querySelector('#detail-dimensions').textContent = entry.dimensions ? entry.dimensions.join(' × ') : '';
   const alias = document.querySelector('#detail-alias');
   alias.hidden = !entry.alias;
-  alias.textContent = entry.alias ? `历史名称：${entry.alias}` : '';
+  alias.textContent = entry.alias ? `${t('历史名称')}：${entry.alias}` : '';
   const image = document.querySelector('#detail-image');
   const font = document.querySelector('#detail-font');
   const isFont = /\.woff2?$/i.test(entry.path);
@@ -158,7 +193,7 @@ function showDetails(entry) {
     image.alt = entry.name;
   }
   document.querySelector('#open-asset').href = assetUrl(entry.path);
-  document.querySelector('#copy-path').textContent = '复制路径';
+  document.querySelector('#copy-path').textContent = t('复制路径');
   const related = document.querySelector('#related-files');
   related.replaceChildren();
   for (const file of entry.related || []) {
@@ -167,7 +202,7 @@ function showDetails(entry) {
     link.href = assetUrl(file.path);
     link.target = '_blank';
     link.rel = 'noreferrer';
-    link.textContent = `${file.label} ↗`;
+    link.textContent = `${t(file.label)} ↗`;
     related.append(link);
   }
   document.querySelector('#related-wrap').hidden = related.childElementCount === 0;
@@ -186,8 +221,10 @@ document.querySelector('#copy-path').addEventListener('click', async (event) => 
   const button = event.currentTarget;
   try {
     await navigator.clipboard.writeText(currentEntry.path);
-    button.textContent = '已复制';
+    button.textContent = t('已复制');
   } catch {
-    button.textContent = '复制失败，请手动选择路径';
+    button.textContent = t('复制失败，请手动选择路径');
   }
 });
+
+applyLanguage();

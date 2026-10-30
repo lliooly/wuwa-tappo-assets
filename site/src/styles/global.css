@@ -201,3 +201,18 @@ dialog { border-radius: 22px; }
   .category-symbol:has(.category-number) { display: none; }
   .category.active { background: var(--soft); color: var(--ink); }
 }
+
+/* Shared rounded controls and uninterrupted modal corners. */
+.repo-link, .language-toggle { display: inline-flex; align-items: center; justify-content: center; min-width: 40px; height: 40px; border: 1px solid var(--line); border-radius: 14px; background: transparent; color: var(--ink); cursor: pointer; }
+.repo-link svg { width: 21px; height: 21px; }
+.repo-link:hover, .language-toggle:hover { background: var(--soft); }
+.language-toggle { padding: 0 12px; font-size: 12px; }
+.category-symbol svg { width: 22px; height: 22px; color: #c39c60; }
+.asset-card { border-radius: 22px; }
+.dialog-content { border-radius: inherit; overflow: hidden; }
+.dialog-close { border-radius: 12px; }
+#detail-path { border-radius: 12px; }
+.search-box kbd { border-radius: 5px; }
+.group { border-radius: 9px 9px 0 0; }
+@media (max-width: 650px) { .topbar-actions { gap: 8px; } .brand { gap: 8px; } .brand-caption { padding-left: 8px; font-size: 13px; } .language-toggle { padding: 0 8px; } }
+@media (max-width: 480px) { .brand-caption { display: none; } }

@@ -1,0 +1,28 @@
+name: 版权、更正或删除请求
+description: 联系维护者处理素材版权、署名、来源或删除问题
+title: "[权利请求] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Issue 对所有人公开。请勿提交身份证件、住址、电话或其他敏感信息。
+        需要保密或提交正式版权通知时，请使用 [GitHub 内容移除流程](https://docs.github.com/en/site-policy/content-removal-policies/submitting-content-removal-requests)。
+  - type: textarea
+    id: material
+    attributes:
+      label: 涉及的素材或页面
+      description: 请提供仓库路径或链接，便于准确定位。
+    validations:
+      required: true
+  - type: textarea
+    id: request
+    attributes:
+      label: 希望采取的措施
+      description: 例如删除、停止提供、补充署名或更正来源。
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: 补充说明
+      description: 可以提供公开的权利证明或官方联系页面；请勿提交敏感个人信息。

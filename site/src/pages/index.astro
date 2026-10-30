@@ -4,6 +4,7 @@ import gallery from '../generated/gallery.json';
 
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/`;
 const assetUrl = (path) => `${base}${path.split('/').map(encodeURIComponent).join('/')}`;
+const categoryIcons = { character: 'type-icon-character.png', accessory: 'type-icon-accessory.png', emote: 'type-icon-emote.png' };
 const initialCategory = gallery.categories[0];
 const initialGroup = initialCategory.groups[0];
 const initialEntries = initialCategory.entries.filter((entry) => entry.group === initialGroup);
@@ -11,7 +12,7 @@ const json = JSON.stringify(gallery).replaceAll('<', '\\u003c');
 ---
 
 <!doctype html>
-<html lang="zh-CN" data-base={base}>
+<html lang="zh-CN" data-base={base} style={`--atlas-card: url("${assetUrl('assets/界面/原版/atlas-item-bg.png')}")`}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -19,6 +20,7 @@ const json = JSON.stringify(gallery).replaceAll('<', '\\u003c');
     <meta name="color-scheme" content="light dark" />
     <title>素材图鉴 · Wuwa Tappo</title>
     <link rel="icon" type="image/png" href={assetUrl('assets/图标/发行包/favicon.png')} />
+    <style is:inline set:html={`@font-face { font-family: Tappo; src: url("${assetUrl('assets/字体/975MaruSC-Medium-CqkJPt5f.woff2')}") format("woff2"); font-weight: 400 600; font-display: swap; } @font-face { font-family: Tappo; src: url("${assetUrl('assets/字体/975MaruSC-Bold-iviPgHHc.woff2')}") format("woff2"); font-weight: 700 900; font-display: swap; }`} />
     <script is:inline>
       try {
         const savedTheme = localStorage.getItem('wuwa-gallery-theme');
@@ -34,8 +36,8 @@ const json = JSON.stringify(gallery).replaceAll('<', '\\u003c');
   <body>
     <header class="topbar">
       <a href={base} class="brand" aria-label="Wuwa Tappo 素材图鉴首页">
-        <span class="brand-mark" aria-hidden="true">W<span>/</span>T</span>
-        <span class="brand-type">WUWA TAPPO<small>ASSET ARCHIVE</small></span>
+        <img class="brand-logo" src={assetUrl('assets/界面/原版/logo.png')} alt="Wuwa Tappo" />
+        <span class="brand-caption">素材图鉴</span>
       </a>
       <div class="topbar-actions">
         <a class="repo-link" href="https://github.com/lliooly/wuwa-tappo-assets" target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">↗</span></a>
@@ -49,8 +51,8 @@ const json = JSON.stringify(gallery).replaceAll('<', '\\u003c');
     <main class="shell">
       <section class="intro" aria-labelledby="page-title">
         <div>
-          <p class="eyebrow"><span class="status-dot"></span> WUWA TAPPO / ASSET ARCHIVE</p>
-          <h1 id="page-title">素材图鉴<span class="title-dot">.</span></h1>
+          <p class="eyebrow"><img src={assetUrl('assets/界面/原版/nav-atlas-active.png')} alt="" /> WUWA TAPPO</p>
+          <h1 id="page-title">素材图鉴</h1>
           <p class="intro-note">所有素材，一眼找到。</p>
         </div>
         <div class="intro-stat"><strong>{gallery.fileCount.toLocaleString('zh-CN')}</strong><span>FILES IN ARCHIVE</span></div>
@@ -62,14 +64,13 @@ const json = JSON.stringify(gallery).replaceAll('<', '\\u003c');
           <nav id="categories" class="category-list" aria-label="素材分类">
             {gallery.categories.map((category, index) => (
               <button type="button" class:list={['category', { active: index === 0 }]} data-category={category.id} aria-pressed={index === 0 ? 'true' : 'false'}>
-                <span class="category-number">{String(index + 1).padStart(2, '0')}</span>
+                <span class="category-symbol">{categoryIcons[category.id] ? <img src={assetUrl(`assets/界面/原版/${categoryIcons[category.id]}`)} alt="" /> : <span class="category-number">{String(index + 1).padStart(2, '0')}</span>}</span>
                 <span class="category-label">{category.label}</span>
                 <span class="category-count">{category.entries.length}</span>
                 <span class="category-arrow" aria-hidden="true">↗</span>
               </button>
             ))}
           </nav>
-          <p class="sidebar-note">W / T<br /><span>ASSET COLLECTION</span></p>
         </aside>
 
         <section class="collection" aria-labelledby="collection-title">

@@ -2,6 +2,8 @@
 
 本仓库整理《鸣潮》桌宠 **Wuwa Tappo CN 1.0.2** 的客户端内置美术素材，以及 2026-10-30 官方公开图鉴索引中的角色、配件和表情素材。它是非官方整理项目，并非库洛游戏及其关联公司的官方发布；本仓库不声明已获得其授权。
 
+**在线浏览：[Wuwa Tappo 素材图鉴](https://lliooly.github.io/wuwa-tappo-assets/)**
+
 > 仓库公开不代表素材获得开放授权。角色、美术、标识及 SDK 素材的权利属于各自权利人；使用前请自行确认适用的授权和官方规则。字体有各自的第三方许可，详见 [字体授权](docs/字体授权.md)。
 
 ## 素材目录
@@ -31,6 +33,16 @@ git clone https://github.com/lliooly/wuwa-tappo-assets.git
 cd wuwa-tappo-assets
 python3 scripts/verify-assets.py
 ```
+
+本地预览图鉴：
+
+```bash
+cd site
+npm ci
+npm run dev
+```
+
+网站按仓库中的素材清单生成，推送到 `main` 后由 GitHub Actions 自动构建和更新。
 
 ## 权利和联系
 

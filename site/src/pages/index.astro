@@ -1,0 +1,123 @@
+---
+import '../styles/global.css';
+import gallery from '../generated/gallery.json';
+
+const base = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/`;
+const assetUrl = (path) => `${base}${path.split('/').map(encodeURIComponent).join('/')}`;
+const initialCategory = gallery.categories[0];
+const initialGroup = initialCategory.groups[0];
+const initialEntries = initialCategory.entries.filter((entry) => entry.group === initialGroup);
+const json = JSON.stringify(gallery).replaceAll('<', '\\u003c');
+---
+
+<!doctype html>
+<html lang="zh-CN" data-base={base}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Wuwa Tappo 素材归档：浏览角色、配件、表情与界面素材。" />
+    <meta name="color-scheme" content="light dark" />
+    <title>素材图鉴 · Wuwa Tappo</title>
+    <link rel="icon" type="image/png" href={assetUrl('assets/图标/发行包/favicon.png')} />
+    <script is:inline>
+      try {
+        const savedTheme = localStorage.getItem('wuwa-gallery-theme');
+        const theme = savedTheme === 'light' || savedTheme === 'dark'
+          ? savedTheme
+          : (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.dataset.theme = theme;
+      } catch {
+        document.documentElement.dataset.theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+    </script>
+  </head>
+  <body>
+    <header class="topbar">
+      <a href={base} class="brand" aria-label="Wuwa Tappo 素材图鉴首页">
+        <span class="brand-mark" aria-hidden="true">W<span>/</span>T</span>
+        <span class="brand-type">WUWA TAPPO<small>ASSET ARCHIVE</small></span>
+      </a>
+      <div class="topbar-actions">
+        <a class="repo-link" href="https://github.com/lliooly/wuwa-tappo-assets" target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">↗</span></a>
+        <button id="theme-toggle" class="theme-toggle" type="button" aria-label="切换深浅色模式" title="切换深浅色模式">
+          <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="3.7"></circle><path d="M12 2v2.1M12 19.9V22M4.93 4.93l1.49 1.49m11.16 11.16 1.49 1.49M2 12h2.1M19.9 12H22M4.93 19.07l1.49-1.49M17.58 6.42l1.49-1.49"></path></svg>
+          <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20.3 15.5A8.8 8.8 0 0 1 8.5 3.7a8.8 8.8 0 1 0 11.8 11.8Z"></path></svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="shell">
+      <section class="intro" aria-labelledby="page-title">
+        <div>
+          <p class="eyebrow"><span class="status-dot"></span> WUWA TAPPO / ASSET ARCHIVE</p>
+          <h1 id="page-title">素材图鉴<span class="title-dot">.</span></h1>
+          <p class="intro-note">所有素材，一眼找到。</p>
+        </div>
+        <div class="intro-stat"><strong>{gallery.fileCount.toLocaleString('zh-CN')}</strong><span>FILES IN ARCHIVE</span></div>
+      </section>
+
+      <div class="workspace">
+        <aside class="sidebar" aria-label="素材分类">
+          <div class="sidebar-heading"><span>分类</span><span>INDEX / 06</span></div>
+          <nav id="categories" class="category-list" aria-label="素材分类">
+            {gallery.categories.map((category, index) => (
+              <button type="button" class:list={['category', { active: index === 0 }]} data-category={category.id} aria-pressed={index === 0 ? 'true' : 'false'}>
+                <span class="category-number">{String(index + 1).padStart(2, '0')}</span>
+                <span class="category-label">{category.label}</span>
+                <span class="category-count">{category.entries.length}</span>
+                <span class="category-arrow" aria-hidden="true">↗</span>
+              </button>
+            ))}
+          </nav>
+          <p class="sidebar-note">W / T<br /><span>ASSET COLLECTION</span></p>
+        </aside>
+
+        <section class="collection" aria-labelledby="collection-title">
+          <div class="collection-heading">
+            <div><p class="section-kicker">COLLECTION <span id="category-index">/ 01</span></p><h2 id="collection-title">角色</h2></div>
+            <label class="search-box" for="search">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.4"></circle><path d="m15.5 15.5 4.3 4.3"></path></svg>
+              <input id="search" type="search" placeholder="搜索名称或文件名" autocomplete="off" />
+              <kbd>/</kbd>
+            </label>
+          </div>
+          <div class="filter-row">
+            <div id="groups" class="group-list" aria-label="素材类型">
+              {initialCategory.groups.map((group, index) => <button type="button" class:list={['group', { active: index === 0 }]} data-group={group} aria-pressed={index === 0 ? 'true' : 'false'}>{group}</button>)}
+            </div>
+            <p class="result-count"><span id="result-count">{initialEntries.length}</span> 项</p>
+          </div>
+          <div id="gallery" class="gallery" aria-live="polite">
+            {initialEntries.map((entry) => (
+              <button type="button" class="asset-card" data-entry-id={entry.id} aria-label={`查看 ${entry.name}`}>
+                <span class="asset-image"><img src={assetUrl(entry.path)} alt="" loading="lazy" decoding="async" /></span>
+                <span class="asset-text"><span class="asset-name">{entry.name}</span><span class="asset-filename">{entry.filename}</span></span>
+              </button>
+            ))}
+          </div>
+          <p id="empty-state" class="empty-state" hidden>没有找到相关素材。</p>
+          <noscript><p class="empty-state">启用 JavaScript 后可搜索和切换分类。</p></noscript>
+        </section>
+      </div>
+    </main>
+    <footer class="footer"><span>WUWA TAPPO / ASSET ARCHIVE</span><a href="https://github.com/lliooly/wuwa-tappo-assets/blob/main/docs/%E7%89%88%E6%9D%83%E4%B8%8E%E6%9D%A5%E6%BA%90.md" target="_blank" rel="noreferrer">非官方素材归档 · 权利与来源 ↗</a></footer>
+
+    <dialog id="detail-dialog" aria-labelledby="detail-title">
+      <div class="dialog-content">
+        <button id="detail-close" class="dialog-close" type="button" aria-label="关闭">×</button>
+        <div id="detail-preview" class="detail-preview"><img id="detail-image" alt="" /><span id="detail-font" hidden>Aa 字</span></div>
+        <div class="detail-body">
+          <p id="detail-category" class="section-kicker"></p>
+          <h2 id="detail-title"></h2>
+          <p id="detail-alias" class="detail-alias" hidden></p>
+          <div class="path-label">仓库路径 <span id="detail-dimensions"></span></div>
+          <code id="detail-path"></code>
+          <div class="detail-actions"><button id="copy-path" class="primary-action" type="button">复制路径</button><a id="open-asset" class="secondary-action" target="_blank" rel="noreferrer">打开原文件 ↗</a></div>
+          <div id="related-wrap" class="related-wrap" hidden><p class="path-label">同一条目的其他素材</p><div id="related-files" class="related-files"></div></div>
+        </div>
+      </div>
+    </dialog>
+    <script id="gallery-data" type="application/json" set:html={json}></script>
+    <script>import '../scripts/gallery.js';</script>
+  </body>
+</html>

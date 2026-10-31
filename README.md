@@ -1,7 +1,7 @@
 <div align="center">
   <img src="assets/界面/原版/logo.png" width="150" alt="Wuwa Tappo 标识">
   <h1>Wuwa Tappo 素材归档</h1>
-  <p><strong>为 Wuwa Tappo CN 1.0.2 整理可追溯的客户端素材与公开图鉴数据。</strong></p>
+  <p><strong>为 Wuwa Tappo CN 1.0.3 整理可追溯的客户端素材与公开图鉴数据。</strong></p>
   <p>提供按用途分类的素材文件、机器可读索引，以及可搜索的在线图鉴，方便查找、核对和集成。</p>
   <p>
     <a href="https://lliooly.github.io/wuwa-tappo-assets/">在线图鉴 ↗</a> ·
@@ -12,7 +12,7 @@
   </p>
   <p>
     <a href="https://github.com/lliooly/wuwa-tappo-assets/actions/workflows/pages.yml"><img src="https://img.shields.io/github/actions/workflow/status/lliooly/wuwa-tappo-assets/pages.yml?branch=main&style=flat-square&label=Pages" alt="GitHub Pages 工作流状态"></a>
-    <img src="https://img.shields.io/badge/reference-Wuwa_Tappo_CN_1.0.2-6F5B95?style=flat-square" alt="参考版本：Wuwa Tappo CN 1.0.2">
+    <img src="https://img.shields.io/badge/reference-Wuwa_Tappo_CN_1.0.3-6F5B95?style=flat-square" alt="参考版本：Wuwa Tappo CN 1.0.3">
     <img src="https://img.shields.io/badge/catalog-899_entries-23856D?style=flat-square" alt="公开图鉴：899 个条目">
   </p>
 </div>
@@ -20,7 +20,7 @@
 <a id="overview"></a>
 ## 项目概览
 
-本仓库是 Wuwa Tappo CN 1.0.2 的非官方素材与数据快照，整理客户端内置资源和公开图鉴中的角色、配件及表情素材。仓库同时提供目录说明、逐文件校验数据，以及由同一份索引生成的静态图库。
+本仓库是 Wuwa Tappo CN 1.0.3 的非官方素材与数据快照，整理客户端内置资源和公开图鉴中的角色、配件及表情素材。仓库同时提供目录说明、逐文件校验数据，以及由同一份索引生成的静态图库。
 
 公开图鉴快照记录 **899 个条目**：260 个角色外观、135 个配件和 504 个表情。索引指向 3,098 个图片地址；按文件内容去重后，仓库保存 2,791 个素材文件。快照日期为 **2026-10-30**。
 
